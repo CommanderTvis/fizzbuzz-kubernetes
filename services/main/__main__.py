@@ -11,7 +11,7 @@ buzz_host = os.getenv("BUZZ_HOST")
 concat_host = os.getenv("CONCAT_HOST")
 
 
-@app.post("/")
+@app.post("/fizzbuzz/")
 def main():
     try:
         value = int(request.get_json()["value"])
