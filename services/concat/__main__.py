@@ -1,6 +1,7 @@
 import os
 
-from flask import Flask, request, jsonify
+import waitress
+from flask import Flask, request, jsonify, Response
 
 app = Flask(__name__)
 host = os.getenv("HOST", default="0.0.0.0")
@@ -8,7 +9,7 @@ port = int(os.getenv("PORT", default="5000"))
 
 
 @app.get("/concat/")
-def concat():
+def concat() -> Response:
     lhs = request.args.get("lhs")
     if lhs is None:
         return jsonify(error="Expected string parameter 'lhs'")
@@ -18,4 +19,4 @@ def concat():
     return jsonify(result=lhs + rhs)
 
 
-app.run(host=host, port=port)
+waitress.serve(app, host=host, port=port)

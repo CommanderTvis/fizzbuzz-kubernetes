@@ -1,7 +1,9 @@
 import os
 
+import request_boost
 import requests as requests
-from flask import Flask, request, jsonify
+import waitress
+from flask import Flask, request, jsonify, Response
 
 app = Flask(__name__)
 host = os.getenv("HOST", default="0.0.0.0")
@@ -12,17 +14,18 @@ concat_host = os.getenv("CONCAT_HOST")
 
 
 @app.post("/fizzbuzz/")
-def main():
+def main() -> Response:
     try:
         value = int(request.get_json()["value"])
     except (ValueError, TypeError):
-        return "Expected integer parameter 'value'"
-    print(requests.get(fizz_host + "/fizz", params={"value": value}))
-    print(requests.get(fizz_host + "/buzz", params={"value": value}))
-    fizz = requests.get(fizz_host + "/fizz", params={"value": value}).json()["result"]
-    buzz = requests.get(buzz_host + "/buzz", params={"value": value}).json()["result"]
-    concat = requests.get(concat_host + "/concat", params={"lhs": fizz, "rhs": buzz}).json()["result"]
+        return jsonify(error="Expected integer parameter 'value'")
+
+    urls = [f"{fizz_host}/fizz/?value={value}", f"{buzz_host}/buzz/?value={value}"]
+    results = request_boost.boosted_requests(urls=urls, no_workers=2, max_tries=1, verbose=True)
+    fizz, buzz = results
+    concat = requests.get(concat_host + "/concat/", params={"lhs": fizz["result"], "rhs": buzz["result"]}).json()[
+        "result"]
     return jsonify(result=concat)
 
 
-app.run(host=host, port=port)
+waitress.serve(app, host=host, port=port)
