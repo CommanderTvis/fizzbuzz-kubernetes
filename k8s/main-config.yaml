@@ -1,0 +1,11 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: main
+data:
+  HOST: https://127.0.0.1/
+  PORT: 5003
+  FIZZ_HOST: https://127.0.0.1:5002
+  BUZZ_HOST: https://localhost:5000
+  CONCAT_HOST: https://localhost:5001
+  N: 10

@@ -1,0 +1,7 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: concat
+data:
+  HOST: https://127.0.0.1/
+  PORT: 5001
