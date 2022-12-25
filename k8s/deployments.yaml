@@ -1,0 +1,81 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: buzz
+spec:
+  type: ClusterIP
+  selector: 
+    app: buzz
+  ports:
+  - port: 80
+    targetPort: 80
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: fizz
+spec:
+  type: ClusterIP
+  selector: 
+    app: fizz
+  ports:
+  - port: 80
+    targetPort: 80
+---
+apiVersion: app/v1
+kind: Deployment
+metadata:
+  name: buzz
+spec:
+  replicas: 1
+  strategy:
+    type: Recreate
+  selector:
+    matchLabels:
+      app: buzz
+  template:
+    metadata:
+      labels:
+        app: buzz
+    spec:
+      containers:
+      - name: buzz
+        image: gor8808/buzz-docker
+        ports:
+          - containerPort: 5000
+        envFrom:
+          - configMapRef: 
+              name: buzz-config
+        resources:
+          limits:
+            memory: "64Mi"
+            cpu: "0.1"
+---
+apiVersion: app/v1
+kind: Deployment
+metadata:
+  name: fizz
+spec:
+  replicas: 1
+  strategy:
+    type: Recreate
+  selector:
+    matchLabels:
+      app: fizz
+  template:
+    metadata:
+      labels:
+        app: fizz
+    spec:
+      containers:
+      - name: fizz
+        image: gor8808/fizz-docker
+        ports:
+          - containerPort: 5001
+        envFrom:
+          - configMapRef: 
+              name: buzz-config
+        resources:
+          limits:
+            memory: "64Mi"
+            cpu: "0.1"
