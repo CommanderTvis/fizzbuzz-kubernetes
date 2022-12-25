@@ -1,13 +1,14 @@
 import os
 
-from flask import Flask, request
+from flask import Flask, request, jsonify
 
 app = Flask(__name__)
-
+host = os.getenv("HOST", default="0.0.0.0")
+port = int(os.getenv("PORT", default="5000"))
 n = int(os.getenv("N", default=3))
 
 
-@app.get("/")
+@app.get("/fizz/")
 def fizz():
     try:
         variable = int(request.args.get("value"))
@@ -15,8 +16,8 @@ def fizz():
         return "Expected integer parameter 'value'"
 
     if variable % n == 0:
-        return "fizz"
-    return ""
+        return jsonify(result="fizz")
+    return jsonify(result="")
 
 
-app.run()
+app.run(host=host, port=port)
