@@ -7,8 +7,10 @@ spec:
   selector: 
     app: buzz
   ports:
-  - port: 80
+  - name: http
+    port: 80
     targetPort: 80
+    protocol: TCP
 ---
 apiVersion: v1
 kind: Service
@@ -19,8 +21,10 @@ spec:
   selector: 
     app: fizz
   ports:
-  - port: 80
-    targetPort: 80
+  - name: http
+    port: 81
+    targetPort: 81
+    protocol: TCP
 ---
 apiVersion: v1
 kind: Service
@@ -31,8 +35,10 @@ spec:
   selector: 
     app: concat
   ports:
-  - port: 80
-    targetPort: 80
+  - name: http
+    port: 82
+    targetPort: 82
+    protocol: TCP
 ---
 apiVersion: v1
 kind: Service
@@ -43,8 +49,10 @@ spec:
   selector: 
     app: main
   ports:
-  - port: 80
-    targetPort: 80
+  - name: http
+    port: 83
+    targetPort: 83
+    protocol: TCP
 ---
 apiVersion: app/v1
 kind: Deployment
@@ -161,3 +169,36 @@ spec:
           limits:
             memory: "64Mi"
             cpu: "0.1"
+---
+# Replication Controller for scaleing
+apiVersion: v1beta3
+kind: ReplicationController
+metadata:
+  name: nginx-controller
+spec:
+  replicas: 5
+  selector:
+    name: nginx
+  template:
+    metadata:
+      labels:
+        name: nginx
+    spec:
+      containers:
+      - name: nginx
+        image: nginx
+        ports:
+          - containerPort: 80
+          - containerPort: 81
+          - containerPort: 82
+          - containerPort: 83
+        livenessProbe:
+          enabled: true
+          type: http
+          initialDelaySeconds: 20
+          TimeoutSeconds: 10
+          httpGet:
+            path: /
+            port: 80
+      portals:
+        - destination: nginx
