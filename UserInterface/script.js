@@ -3,27 +3,22 @@ button.addEventListener('click', displayNumber);
 function displayNumber() {
   const input = document.getElementById('number-input');
   const number = input.value;
-
-    const options = {
-      hostname: 'url_adrress_answer',
-      path: 'application/json',
+  const postData = async (url = '', data = {}) => {
+    const response = await fetch(url, {
       method: 'POST',
       headers: {
-        "Content-Type": "application/json"
-      }
-    };
-
-    const req = http.request(options, (res) => {
-      console.log(`STATUS: ${res.statusCode}`);
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(data)
     });
-    req.write(number);
-    req.end();
+    return response.json();
+  }
 
-    var Get_Requst = new XMLHttpRequest();
-    Get_Requst.open("GET", "url_adrress_answer", true);
-    Get_Requst.onload = function (){
-    alert( Get_Requst.responseText);
+  postData('127.0.0.1:5003/fizzbuzz/', { fizzbuzz: number })
+    .then((data) => {
+      console.log(data);
+    });
+
 }
-Get_Requst.send(null);
-}
+
 
