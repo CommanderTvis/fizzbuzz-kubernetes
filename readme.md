@@ -13,27 +13,27 @@
 
 ## С точки зрения админа кубера:
 
-- есть deployment fizzbuzz
-- в deployment'е 4 replicasets: fizz, buzz, concat, main -- микросервисы
+- есть deployment `fizzbuzz`
+- в deployment'е 4 replicasets: `fizz`, `buzz`, `concat`, `main` &mdash; микросервисы
 
-- main:
+- `main`:
   - взаимодействует с пользователем, соответственно есть Ingress, проброшен порт и т.&nbsp;п.
   - получает пользовательские данные, возвращает ответ, но не вычисляет его, вместо этого посылает запросы другим сервисам
   - мониторит ситуацию с количеством сообщений и масштабирует другие реплики (путём запросов к куберу)
 
-- fizz, buzz, concat:
+- `fizz`, `buzz`, `concat`:
   - просто вычисляют ответ в соответствии с ТЗ
   
 ## С точки зрения бэкэнд-разработчика (описания хэндлеров):
 
 - main:
-  - POST /fizzbuzz, тело: {"value": 42}. ответ: {"result": "fizz"}
+  - `POST /fizzbuzz`, тело: `{"value": 42}`; ответ: `{"result": "fizz"}`
 - fizz:
-  - GET /fizz?value=42, ответ: {"result": "fizz"}
+  - `GET /fizz?value=42`, ответ: `{"result": "fizz"}`
 - buzz:
-  - GET /buzz?value=42, ответ: {"result": ""}
+  - `GET /buzz?value=42`, ответ: `{"result": ""}`
 - concat:
-  - GET /concat?lhs=fizz&rhs=, ответ: {"result": "fizz"}
+  - `GET /concat?lhs=fizz&rhs=`, ответ: `{"result": "fizz"}`
 
 ## DOD:
 
